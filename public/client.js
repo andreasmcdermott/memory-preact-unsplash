@@ -28,11 +28,16 @@ const Card = ({card, handleClick}) => h('div', {
 const Board = ({cards, handleClick}) => h('div', {className: 'board box'}, 
   cards.map(card => h(Card, {card, handleClick})));
 
-const Result = ({isGameOver, message, clicks, handleRestart}) => 
+const Result = ({photographers, isGameOver, message, clicks, handleRestart}) => 
   h('div', {className: 'result box'}, [
+    isGameOver ? h('button', {onClick: handleRestart}, 'Play again!') : null,
     h('p', null, message),
     h('p', null, [h('strong', null, 'Turns: '), clicks]),
-    isGameOver ? h('p', null, h('button', {onClick: handleRestart}, 'Play again!')) : null
+    h('div', null, [
+      h('p', null, ['All photos come from ', h('a', {href: 'https://unsplash.com/'}, 'Unsplash'), '.']),
+      h('p', null, h('strong', null, 'The current photos by:')),
+      h('p', null, photographers.map(({name, link}) => h('a', {className: 'block', href: link}, name)))
+    ])
   ]);
 
 class App extends Component {
@@ -109,7 +114,7 @@ class App extends Component {
     }
   }
   
-  render(props, {cards, clicks}) {
+  render({images}, {cards, clicks}) {
     return h('div', {className: 'app'}, [
       h(Board, {
         cards, 
@@ -119,7 +124,8 @@ class App extends Component {
         clicks, 
         message: this.getUserMessage(), 
         isGameOver: this.isGameOver(),
-        handleRestart: this.handleRestart
+        handleRestart: this.handleRestart,
+        photographers: images.map(({user}) => user)
       })
     ]);
   }
@@ -155,9 +161,13 @@ function getImageData(query) {
     }
   })
   .then(({results}) => results
-    .map(({width, height, urls}) => ({
+    .map(({user, width, height, urls}) => ({
       format: width > height ? 'landscape' : 'portrait', // Used in css to crop image
-      url: urls.small
+      url: urls.small,
+      user: {
+        name: user.name,
+        link: user.links.html
+      }
     })))
   .catch(() => getBackupData()); // If error was thrown, use backup data instead.
 }
@@ -173,28 +183,36 @@ function shuffleList(list) {
 
 function getBackupData() {
   return [{
-    url: 'https://images.unsplash.com/photo-1443750200537-00fd518bdc82?dpr=2&auto=compress,format&fit=crop&w=376&h=251&q=80&cs=tinysrgb&crop=', 
+    url: 'https://images.unsplash.com/photo-1443750200537-00fd518bdc82?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&s=3a931d3af17a4cb16021583fa0df6148', 
+    user: {name: 'Matthew Henry', link: 'http://unsplash.com/@matthewhenry'},
     format: 'landscape'
   }, {
-    url: 'https://images.unsplash.com/photo-1451104726450-0a3d58972500?dpr=2&auto=compress,format&fit=crop&w=376&h=251&q=80&cs=tinysrgb&crop=',
+    url: 'https://images.unsplash.com/photo-1449439338818-435146fcb833?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&s=161c8a3ab3c1c76db36a63eb8fa308b9',
+    user: {name: 'Jez Timms', link: 'http://unsplash.com/@jeztimms'},
     format: 'landscape'
   }, {
-    url: 'https://images.unsplash.com/photo-1455287278107-115faab3eafa?dpr=2&auto=compress,format&fit=crop&w=376&h=251&q=80&cs=tinysrgb&crop=',
+    url: 'https://images.unsplash.com/photo-1445708285800-cef03714a0ef?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&s=5f244343f704b3eb546f3dc80e9b6be0',
+    user: {name: 'Erik Stine', link: 'http://unsplash.com/@charleseriksun'},
     format: 'landscape'
   }, {
-    url: 'https://images.unsplash.com/photo-1426287658398-5a912ce1ed0a?dpr=2&auto=compress,format&fit=crop&w=376&h=250&q=80&cs=tinysrgb&crop=',
+    url: 'https://images.unsplash.com/photo-1451104726450-0a3d58972500?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&s=f7655bf49ec8cf8a7c98f6fa15cd56bf',
+    user: {name: 'Henry Majoros', link: 'http://unsplash.com/@hmojo'},
     format: 'landscape'
   }, {
-    url: 'https://images.unsplash.com/photo-1437957146754-f6377debe171?dpr=2&auto=compress,format&fit=crop&w=376&h=376&q=80&cs=tinysrgb&crop=',
+    url: 'https://images.unsplash.com/photo-1456534231849-7d5fcd82d77b?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&s=024548a00a3c652cda7fe5fdabd33d09',
+    user: {name: 'meredith hunter', link: 'http://unsplash.com/@mere_hunter'},
     format: 'landscape'
   }, {
-    url: 'https://images.unsplash.com/photo-1452447224378-04c089d77aa4?dpr=2&auto=compress,format&fit=crop&w=376&h=251&q=80&cs=tinysrgb&crop=',
+    url: 'https://images.unsplash.com/photo-1456087468887-17b7d7b076e0?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&s=44e3227a9dea53c1f06bcc83e256e149',
+    user: {name: 'Manu Adán', link: 'http://unsplash.com/@neziodsgn'},
     format: 'landscape'
   }, {
-    url: 'https://images.unsplash.com/photo-1415798408244-83edcac0acca?dpr=2&auto=compress,format&fit=crop&w=376&h=250&q=80&cs=tinysrgb&crop=',
+    url: 'https://images.unsplash.com/photo-1469225208447-8329cbd3cb3a?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&s=5be2026e94b5b43ca944ae2e5e63f813',
+    user: {name: 'Ana Silva', link: 'http://unsplash.com/@noqas'},
     format: 'landscape'
   }, {
-    url: 'https://images.unsplash.com/photo-1455845694919-f0b3826ea301?dpr=2&auto=compress,format&fit=crop&w=376&h=211&q=80&cs=tinysrgb&crop=',
+    url: 'https://images.unsplash.com/photo-1455287278107-115faab3eafa?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&s=0e3f29fb06645c825b35158647947405',
+    user: {name: 'Robert Larsson', link: 'http://unsplash.com/@squareddesign'},
     format: 'landscape'
   }];
 }

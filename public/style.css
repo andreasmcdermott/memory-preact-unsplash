@@ -18,6 +18,11 @@ button {
   box-shadow: 2px 2px 0 rgba(105, 105, 105, 1) !important;
 }
 
+button:hover {
+  background-color: lightskyblue !important;
+  color: white !important;
+}
+
 h1 {
   color: white !important;
   font-size: 2.4em;
@@ -49,7 +54,19 @@ h1 {
   width: 292px;
   align-self: flex-start;
   padding: 10px;
-  
+}
+
+.result a {
+  color: dodgerblue;
+  text-decoration: none;
+}
+
+.result p {
+  margin-top: 0;
+}
+
+.result button {
+  float: right;
 }
 
 .board {
@@ -104,4 +121,8 @@ h1 {
 
 .card.back.portrait {
   background-size: 100px auto;
+}
+
+.block {
+  display: block;
 }
